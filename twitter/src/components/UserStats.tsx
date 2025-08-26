@@ -1,35 +1,45 @@
-
-import UserAvatar from "./UserAvatar.tsx";
-import {useContext} from "react";
-import {TwitterContext} from "../utils/twitterContext.ts";
-
+import { useDispatch, useSelector } from "react-redux";
+import type { RootState, AppDispatch } from "../store"; // 👈 same here
+import { changeName, changeStats } from "../features/twitterSlice";
+import UserAvatar from "./UserAvatar";
 
 const UserStats = () => {
-    const {user, stats, changeName, changeStats} = useContext(TwitterContext)
-    return (
-        <div className={"user-stats"}>
-            <UserAvatar/>
-            <p
-            onClick={() => changeName(prompt("Enter new nickname") as string)}
-            >{user.name}</p>
-            <div className={"stats"}>
-                <div
-                onClick={() => changeStats("followers", 1)}
-                onContextMenu={(e) => {
-                    e.preventDefault();
-                    changeStats("followers", -1)
-                }}
-                >Followers: {stats.followers}</div>
-                <div
-                    onClick={() => changeStats("subscribers", 1)}
-                    onContextMenu={(e) => {
-                        e.preventDefault();
-                        changeStats("subscribers", -1)
-                    }}
-                >Subscribers: {stats.subscribers}</div>
-            </div>
+  const dispatch = useDispatch<AppDispatch>();
+  const { user, stats } = useSelector((state: RootState) => state.twitter);
+
+  return (
+    <div className="user-stats">
+      <UserAvatar />
+      <p
+        onClick={() => {
+          const name = prompt("Enter new nickname");
+          if (name) dispatch(changeName(name));
+        }}
+      >
+        {user.name}
+      </p>
+      <div className="stats">
+        <div
+          onClick={() => dispatch(changeStats({ type: "followers", num: 1 }))}
+          onContextMenu={(e) => {
+            e.preventDefault();
+            dispatch(changeStats({ type: "followers", num: -1 }));
+          }}
+        >
+          Followers: {stats.followers}
         </div>
-    );
+        <div
+          onClick={() => dispatch(changeStats({ type: "subscribers", num: 1 }))}
+          onContextMenu={(e) => {
+            e.preventDefault();
+            dispatch(changeStats({ type: "subscribers", num: -1 }));
+          }}
+        >
+          Subscribers: {stats.subscribers}
+        </div>
+      </div>
+    </div>
+  );
 };
 
 export default UserStats;
