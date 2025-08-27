@@ -1,5 +1,5 @@
 import { useDispatch, useSelector } from "react-redux";
-import type { RootState, AppDispatch } from "../store"; // 👈 use "type" import
+import type { RootState, AppDispatch } from "../store";
 import { changeAvatar } from "../features/twitterSlice";
 
 const UserAvatar = () => {
